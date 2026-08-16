@@ -1,0 +1,11 @@
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Node / Build artifacts (if any)
+node_modules/
+dist/
+build/
+.vercel

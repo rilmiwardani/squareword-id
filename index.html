@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Squareword Indonesia - Teka-Teki Kata 5x5 Harian</title>
+    <meta name="description" content="Mainkan Squareword Indonesia, permainan teka-teki kata 5x5 harian gratis! Tebak kata 5-huruf untuk mengungkap kotak 5x5 di mana setiap baris dan kolom membentuk kata baku KBBI.">
+    <meta name="keywords" content="squareword indonesia, game kata, tebak kata indonesia, wordle indonesia, kbbi word game, teka-teki 5x5, game asah otak">
+    <meta name="theme-color" content="#121213">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Squareword Indonesia - Game Kata 5x5">
+    <meta property="og:description" content="Ungkap kotak 5x5 kata Bahasa Indonesia dengan tebakan sesedikit mungkin!">
+    <meta property="og:type" content="website">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23388e3c'/%3E%3Ctext x='16' y='23' font-family='sans-serif' font-size='20' font-weight='900' fill='white' text-anchor='middle'%3ES%3C/text%3E%3C/svg%3E">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="dark-theme">
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <button id="btn-menu" class="icon-btn" title="Menu" aria-label="Buka Menu">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <button id="btn-help" class="icon-btn" title="Cara Bermain" aria-label="Petunjuk Cara Bermain">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="header-title-container">
+                <h1 class="header-title">SQUAREWORD <span class="badge-id">ID</span></h1>
+                <div id="game-mode-label" class="game-mode-subtitle">Teka-Teki Harian #1</div>
+            </div>
+
+            <div class="header-right">
+                <button id="btn-stats" class="icon-btn" title="Statistik" aria-label="Lihat Statistik">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                </button>
+                <button id="btn-settings" class="icon-btn" title="Pengaturan" aria-label="Buka Pengaturan">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Game Section -->
+        <main class="game-main">
+            <!-- 6x6 Grid (Top Input Row + 5 Puzzle Rows, 5 Columns + Clue/View Column) -->
+            <div class="board-wrapper">
+                <div class="board-container" id="board-container">
+                    <!-- Row 0: Real-time Word Input Row + (LIHAT) Button -->
+                    <div class="grid-row input-row" id="input-row">
+                        <div class="tile input-tile" data-input-col="0"><span class="letter"></span></div>
+                        <div class="tile input-tile" data-input-col="1"><span class="letter"></span></div>
+                        <div class="tile input-tile" data-input-col="2"><span class="letter"></span></div>
+                        <div class="tile input-tile" data-input-col="3"><span class="letter"></span></div>
+                        <div class="tile input-tile" data-input-col="4"><span class="letter"></span></div>
+                        <button class="tile guess-counter-tile" id="guess-counter-tile" title="Lihat riwayat tebakan" aria-label="Lihat riwayat tebakan">
+                            <span class="guess-count-num" id="guess-number">0</span>
+                            <span class="guess-count-label" id="guess-label">(LIHAT)</span>
+                        </button>
+                    </div>
+
+                    <!-- Row 1: Puzzle Row 0 -->
+                    <div class="grid-row puzzle-row" data-row="0" id="puzzle-row-0">
+                        <div class="tile puzzle-tile" data-row="0" data-col="0"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="0" data-col="1"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="0" data-col="2"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="0" data-col="3"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="0" data-col="4"><span class="letter"></span></div>
+                        <div class="clue-box" data-row="0" id="clue-row-0">
+                            <div class="clue-letters"></div>
+                        </div>
+                    </div>
+
+                    <!-- Row 2: Puzzle Row 1 -->
+                    <div class="grid-row puzzle-row" data-row="1" id="puzzle-row-1">
+                        <div class="tile puzzle-tile" data-row="1" data-col="0"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="1" data-col="1"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="1" data-col="2"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="1" data-col="3"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="1" data-col="4"><span class="letter"></span></div>
+                        <div class="clue-box" data-row="1" id="clue-row-1">
+                            <div class="clue-letters"></div>
+                        </div>
+                    </div>
+
+                    <!-- Row 3: Puzzle Row 2 -->
+                    <div class="grid-row puzzle-row" data-row="2" id="puzzle-row-2">
+                        <div class="tile puzzle-tile" data-row="2" data-col="0"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="2" data-col="1"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="2" data-col="2"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="2" data-col="3"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="2" data-col="4"><span class="letter"></span></div>
+                        <div class="clue-box" data-row="2" id="clue-row-2">
+                            <div class="clue-letters"></div>
+                        </div>
+                    </div>
+
+                    <!-- Row 4: Puzzle Row 3 -->
+                    <div class="grid-row puzzle-row" data-row="3" id="puzzle-row-3">
+                        <div class="tile puzzle-tile" data-row="3" data-col="0"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="3" data-col="1"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="3" data-col="2"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="3" data-col="3"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="3" data-col="4"><span class="letter"></span></div>
+                        <div class="clue-box" data-row="3" id="clue-row-3">
+                            <div class="clue-letters"></div>
+                        </div>
+                    </div>
+
+                    <!-- Row 5: Puzzle Row 4 -->
+                    <div class="grid-row puzzle-row" data-row="4" id="puzzle-row-4">
+                        <div class="tile puzzle-tile" data-row="4" data-col="0"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="4" data-col="1"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="4" data-col="2"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="4" data-col="3"><span class="letter"></span></div>
+                        <div class="tile puzzle-tile" data-row="4" data-col="4"><span class="letter"></span></div>
+                        <div class="clue-box" data-row="4" id="clue-row-4">
+                            <div class="clue-letters"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Virtual Keyboard -->
+            <div class="keyboard" id="keyboard">
+                <div class="keyboard-row">
+                    <button class="key" data-key="Q">Q</button>
+                    <button class="key" data-key="W">W</button>
+                    <button class="key" data-key="E">E</button>
+                    <button class="key" data-key="R">R</button>
+                    <button class="key" data-key="T">T</button>
+                    <button class="key" data-key="Y">Y</button>
+                    <button class="key" data-key="U">U</button>
+                    <button class="key" data-key="I">I</button>
+                    <button class="key" data-key="O">O</button>
+                    <button class="key" data-key="P">P</button>
+                </div>
+                <div class="keyboard-row">
+                    <div class="key-spacer-half"></div>
+                    <button class="key" data-key="A">A</button>
+                    <button class="key" data-key="S">S</button>
+                    <button class="key" data-key="D">D</button>
+                    <button class="key" data-key="F">F</button>
+                    <button class="key" data-key="G">G</button>
+                    <button class="key" data-key="H">H</button>
+                    <button class="key" data-key="J">J</button>
+                    <button class="key" data-key="K">K</button>
+                    <button class="key" data-key="L">L</button>
+                    <div class="key-spacer-half"></div>
+                </div>
+                <div class="keyboard-row">
+                    <button class="key key-action key-enter" data-key="ENTER" aria-label="Kirim Tebakan">↵</button>
+                    <button class="key" data-key="Z">Z</button>
+                    <button class="key" data-key="X">X</button>
+                    <button class="key" data-key="C">C</button>
+                    <button class="key" data-key="V">V</button>
+                    <button class="key" data-key="B">B</button>
+                    <button class="key" data-key="N">N</button>
+                    <button class="key" data-key="M">M</button>
+                    <button class="key key-action key-backspace" data-key="BACKSPACE" aria-label="Hapus">
+                        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"></path>
+                            <line x1="18" y1="9" x2="12" y2="15"></line>
+                            <line x1="12" y1="9" x2="18" y2="15"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+
+    <!-- 1. Tutorial / Help Modal (5 Slides Carousel) -->
+    <div id="modal-help" class="modal-overlay hidden">
+        <div class="modal-card modal-help-card">
+            <button class="modal-close-btn" data-close="modal-help">&times;</button>
+            <div class="carousel-container">
+                <!-- Slide 1: Welcome -->
+                <div class="carousel-slide active" data-slide="0">
+                    <div class="slide-badge">SQUAREWORD ID</div>
+                    <h2 class="slide-title">Selamat datang di SQUAREWORD</h2>
+                    <p class="slide-desc">Permainan teka-teki kata harian dalam <strong>dua dimensi</strong>.</p>
+                    <div class="tutorial-visual welcome-visual">
+                        <div class="demo-mini-grid">
+                            <div class="demo-row"><span class="d-cell green">M</span><span class="d-cell green">A</span><span class="d-cell green">L</span><span class="d-cell green">A</span><span class="d-cell green">H</span></div>
+                            <div class="demo-row"><span class="d-cell green">O</span><span class="d-cell">·</span><span class="d-cell">·</span><span class="d-cell">·</span><span class="d-cell green">A</span></div>
+                            <div class="demo-row"><span class="d-cell green">D</span><span class="d-cell">·</span><span class="d-cell green">D</span><span class="d-cell">·</span><span class="d-cell">·</span></div>
+                            <div class="demo-row"><span class="d-cell green">U</span><span class="d-cell green">T</span><span class="d-cell green">A</span><span class="d-cell green">M</span><span class="d-cell green">A</span></div>
+                            <div class="demo-row"><span class="d-cell green">S</span><span class="d-cell">·</span><span class="d-cell">·</span><span class="d-cell">·</span><span class="d-cell green">P</span></div>
+                        </div>
+                    </div>
+                    <p class="slide-subtext">Ungkap huruf grid 5×5 dengan tebakan sesedikit mungkin.<br>Mainkan teka-teki baru setiap hari!</p>
+                </div>
+
+                <!-- Slide 2: The Square (10 Distinct Words) -->
+                <div class="carousel-slide" data-slide="1">
+                    <h2 class="slide-title">Kotak 5×5</h2>
+                    <p class="slide-desc">Kotak ini berisi <strong>5 kata mendatar</strong> dan <strong>5 kata menurun</strong> yang berbeda.</p>
+                    <div class="tutorial-visual square-visual">
+                        <div class="visual-arrows">
+                            <div class="arrow-horiz"><span>5 Kata Mendatar ➔</span></div>
+                            <div class="demo-mini-grid bordered">
+                                <div class="demo-row"><span class="d-cell">M</span><span class="d-cell">A</span><span class="d-cell">L</span><span class="d-cell">A</span><span class="d-cell">H</span></div>
+                                <div class="demo-row"><span class="d-cell">O</span><span class="d-cell">M</span><span class="d-cell">E</span><span class="d-cell">G</span><span class="d-cell">A</span></div>
+                                <div class="demo-row"><span class="d-cell">D</span><span class="d-cell">A</span><span class="d-cell">D</span><span class="d-cell">A</span><span class="d-cell">R</span></div>
+                                <div class="demo-row"><span class="d-cell">U</span><span class="d-cell">T</span><span class="d-cell">A</span><span class="d-cell">M</span><span class="d-cell">A</span></div>
+                                <div class="demo-row"><span class="d-cell">S</span><span class="d-cell">I</span><span class="d-cell">K</span><span class="d-cell">A</span><span class="d-cell">P</span></div>
+                            </div>
+                            <div class="arrow-vert"><span>5 Kata Menurun 🠓</span></div>
+                        </div>
+                    </div>
+                    <p class="slide-subtext">Semua 10 kata adalah kata baku 5-huruf yang berbeda dalam KBBI.</p>
+                </div>
+
+                <!-- Slide 3: Guessing -->
+                <div class="carousel-slide" data-slide="2">
+                    <h2 class="slide-title">Menebak</h2>
+                    <p class="slide-desc">Ketik tebakan kata 5-huruf yang valid untuk mengungkap huruf-huruf di dalam kotak.</p>
+                    <div class="tutorial-visual">
+                        <div class="typing-demo-container">
+                            <div class="demo-row">
+                                <span class="d-cell typed">L</span>
+                                <span class="d-cell typed">A</span>
+                                <span class="d-cell typed">M</span>
+                                <span class="d-cell typed">P</span>
+                                <span class="d-cell typed">U</span>
+                                <div class="demo-counter-tile" title="Riwayat tebakan">
+                                    <span class="demo-counter-num">1</span>
+                                    <span class="demo-counter-lbl">(LIHAT)</span>
+                                </div>
+                            </div>
+                            <div class="enter-badge-wrapper">
+                                <span class="enter-badge">ENTER ↵</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="slide-subtext">Tebakan berlaku untuk mengevaluasi seluruh baris mendatar.<br>Tekan tombol <strong>(LIHAT)</strong> untuk melihat riwayat tebakan Anda.</p>
+                </div>
+
+                <!-- Slide 4: Rows & Clues -->
+                <div class="carousel-slide" data-slide="3">
+                    <h2 class="slide-title">Baris & Kolom Petunjuk</h2>
+                    <p class="slide-desc">Umpan balik warna untuk setiap tebakan:</p>
+                    <div class="tutorial-visual">
+                        <div class="row-demo-container">
+                            <div class="demo-row">
+                                <span class="d-cell green">U</span>
+                                <span class="d-cell">·</span>
+                                <span class="d-cell">·</span>
+                                <span class="d-cell">·</span>
+                                <span class="d-cell green">R</span>
+                                <div class="demo-clue-badge">NS</div>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="slide-bullet-list">
+                        <li><span class="bullet-tag green">Hijau</span> : Huruf berada pada posisi yang tepat di baris tersebut.</li>
+                        <li><span class="bullet-tag gold">Kotak Emas</span> : Kolom indikator emas di sebelah kanan mencatat huruf-huruf pada baris tersebut yang <strong>posisinya belum tepat</strong>.</li>
+                    </ul>
+                </div>
+
+                <!-- Slide 5: Keyboard -->
+                <div class="carousel-slide" data-slide="4">
+                    <h2 class="slide-title">Papan Ketik</h2>
+                    <p class="slide-desc">Papan ketik memberikan informasi status seluruh huruf di dalam kotak 5×5:</p>
+                    <div class="tutorial-visual">
+                        <div class="keyboard-demo-row">
+                            <span class="demo-key green">A</span>
+                            <span class="demo-key yellow">E</span>
+                            <span class="demo-key grey">Z</span>
+                            <span class="demo-key default">K</span>
+                        </div>
+                    </div>
+                    <ul class="slide-bullet-list">
+                        <li><span class="bullet-tag green">Hijau</span> : Semua kemunculan huruf tersebut di kotak sudah terungkap pada posisi yang benar.</li>
+                        <li><span class="bullet-tag yellow">Kuning</span> : Huruf ada di dalam kotak, namun masih ada yang belum tepat posisinya.</li>
+                        <li><span class="bullet-tag grey">Abu-abu</span> : Huruf sama sekali tidak ada di dalam kotak.</li>
+                        <li><span class="bullet-tag default">Netral</span> : Belum pernah ditebak.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Carousel Navigation -->
+            <div class="carousel-footer">
+                <div class="carousel-dots" id="carousel-dots">
+                    <button class="dot active" data-goto="0" aria-label="Slide 1"></button>
+                    <button class="dot" data-goto="1" aria-label="Slide 2"></button>
+                    <button class="dot" data-goto="2" aria-label="Slide 3"></button>
+                    <button class="dot" data-goto="3" aria-label="Slide 4"></button>
+                    <button class="dot" data-goto="4" aria-label="Slide 5"></button>
+                </div>
+                <button id="btn-carousel-next" class="btn-primary-action">LANJUT</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Statistics Modal (Authentic SquareWord Layout) -->
+    <div id="modal-stats" class="modal-overlay hidden">
+        <div class="modal-card modal-stats-card">
+            <button class="modal-close-btn" data-close="modal-stats">&times;</button>
+            <h2 class="modal-title stats-header-title">Statistics</h2>
+            
+            <!-- Top 2x3 Metric Overview -->
+            <div class="stats-top-grid">
+                <div class="stats-metric-col">
+                    <div class="stats-metric-label">Streak:</div>
+                    <div class="stats-metric-val" id="stat-cur-streak">0</div>
+                </div>
+                <div class="stats-metric-col">
+                    <div class="stats-metric-label">Max Streak:</div>
+                    <div class="stats-metric-val" id="stat-max-streak">0</div>
+                </div>
+                <div class="stats-metric-col">
+                    <div class="stats-metric-label">Plays:</div>
+                    <div class="stats-metric-val" id="stat-played">0</div>
+                </div>
+                <div class="stats-metric-col">
+                    <div class="stats-metric-label">Monthly Avg:</div>
+                    <div class="stats-metric-val" id="stat-monthly-avg">-</div>
+                </div>
+                <div class="stats-metric-col">
+                    <div class="stats-metric-label">Total Avg:</div>
+                    <div class="stats-metric-val" id="stat-avg-guesses">-</div>
+                </div>
+                <div class="stats-metric-col stats-sync-col">
+                    <div class="stats-metric-label">Synced:</div>
+                    <div class="stats-sync-badge">LOKAL</div>
+                </div>
+            </div>
+
+            <!-- Stats Tabs Navigation -->
+            <div class="stats-nav-tabs">
+                <button class="stats-tab-btn active" data-stats-tab="result">RESULT</button>
+                <button class="stats-tab-btn" data-stats-tab="bars">BARS</button>
+                <button class="stats-tab-btn" data-stats-tab="periods">PERIODS</button>
+                <button class="stats-tab-btn" data-stats-tab="days">DAYS</button>
+            </div>
+
+            <!-- Tab 1: RESULT Panel -->
+            <div class="stats-tab-panel active" id="panel-result">
+                <div class="result-headline" id="result-headline">SquareWord : 0 guesses!</div>
+                <div class="result-subheading">Guesses per word:</div>
+                <div class="word-badges-container" id="word-badges-container">
+                    <!-- Dynamic Badges e.g. [ 5 | after ] [ 9 | ileum ] ... -->
+                </div>
+                <div class="result-quote-container" id="result-quote-container">
+                    <div class="quote-header">
+                        <span class="quote-title">SquareWord ID</span>
+                        <span class="quote-icon">✨</span>
+                    </div>
+                    <p class="quote-body" id="result-quote-body">Semua 10 kata dalam teka-teki 5x5 berhasil terpecahkan dari Kamus Besar Bahasa Indonesia.</p>
+                </div>
+            </div>
+
+            <!-- Tab 2: BARS Panel (Distribution) -->
+            <div class="stats-tab-panel" id="panel-bars">
+                <div class="dist-title">DISTRIBUSI TEBAKAN</div>
+                <div class="dist-chart" id="dist-chart">
+                    <!-- Dynamic Bars Generated by JS -->
+                </div>
+            </div>
+
+            <!-- Tab 3: PERIODS Panel -->
+            <div class="stats-tab-panel" id="panel-periods">
+                <div class="periods-card-list">
+                    <div class="period-row">
+                        <span class="period-title">Total Permainan Dimainkan</span>
+                        <strong class="period-value" id="period-played">0</strong>
+                    </div>
+                    <div class="period-row">
+                        <span class="period-title">Tingkat Kemenangan</span>
+                        <strong class="period-value" id="period-win-pct">0%</strong>
+                    </div>
+                    <div class="period-row">
+                        <span class="period-title">Rata-rata Tebakan Bulanan</span>
+                        <strong class="period-value" id="period-monthly-avg">-</strong>
+                    </div>
+                    <div class="period-row">
+                        <span class="period-title">Rata-rata Tebakan Keseluruhan</span>
+                        <strong class="period-value" id="period-total-avg">-</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: DAYS Panel -->
+            <div class="stats-tab-panel" id="panel-days">
+                <div class="days-history-list" id="days-history-list">
+                    <!-- Populated dynamically with past days -->
+                </div>
+            </div>
+
+            <!-- Authentic Footer Action Bar -->
+            <div class="stats-footer-bar">
+                <button id="btn-share" class="stats-footer-btn btn-share-action">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                    <span>SHARE</span>
+                </button>
+                
+                <button id="btn-stats-info" class="stats-footer-btn btn-info-action" title="Bantuan">
+                    <span>i</span>
+                </button>
+                
+                <button id="btn-stats-archive" class="stats-footer-btn btn-archive-action">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                        <path d="M3 3v5h5"></path>
+                    </svg>
+                    <span>ARCHIVE</span>
+                    <span class="badge-new-pill">NEW!</span>
+                </button>
+
+                <div class="stats-next-timer" id="stats-next-timer">
+                    <div class="next-timer-label">Next: <span id="daily-countdown">00:00:00</span></div>
+                    <div class="next-timer-bar"></div>
+                </div>
+            </div>
+
+            <div class="stats-extra-action">
+                <button id="btn-mode-practice-from-stats" class="btn-secondary-action">Mainkan Mode Latihan Bebas</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Guess History Modal -->
+    <div id="modal-history" class="modal-overlay hidden">
+        <div class="modal-card modal-history-card">
+            <button class="modal-close-btn" data-close="modal-history">&times;</button>
+            <h2 class="modal-title">Guesses</h2>
+            <div class="modal-subtitle-text">Click letter to highlight</div>
+            <div id="history-list" class="history-grid-container">
+                <p class="empty-history-text">Belum ada tebakan yang dimasukkan.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Settings Modal -->
+    <div id="modal-settings" class="modal-overlay hidden">
+        <div class="modal-card modal-settings-card">
+            <button class="modal-close-btn" data-close="modal-settings">&times;</button>
+            <h2 class="modal-title">PENGATURAN</h2>
+            
+            <div class="settings-list">
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">Mode Gelap</div>
+                        <div class="setting-desc">Tampilan gelap yang nyaman untuk mata</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggle-dark-mode" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">Efek Suara</div>
+                        <div class="setting-desc">Suara ketikan dan ubin interaktif</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggle-sound" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">Kurangi Animasi</div>
+                        <div class="setting-desc">Mempercepat transisi dan mengurangi gerakan</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggle-reduced-motion">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">Mode Layar Penuh</div>
+                        <div class="setting-desc" id="setting-fullscreen-desc">Tampilan layar penuh tanpa bilah peramban</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggle-fullscreen">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-title">Kesulitan Mode Latihan</div>
+                        <div class="setting-desc" id="setting-difficulty-desc">Mudah (Tanpa batas tebakan)</div>
+                    </div>
+                    <select id="select-difficulty" class="setting-select-input" aria-label="Tingkat Kesulitan Mode Latihan">
+                        <option value="unlimited">Mudah (Tanpa Batas)</option>
+                        <option value="15">Sedang (Maks 15 Tebakan)</option>
+                        <option value="12">Sulit (Maks 12 Tebakan)</option>
+                        <option value="9">Ekstrem (Maks 9 Tebakan)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-about">
+                <h4>Tentang Squareword ID</h4>
+                <p>Versi Bahasa Indonesia dari permainan puzzle kata 5x5 Squareword. Daftar kata divalidasi berdasarkan <strong>Kamus Besar Bahasa Indonesia (KBBI)</strong>.</p>
+                <div class="about-footer">Squareword ID &copy; 2026</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Archives Modal -->
+    <div id="modal-archives" class="modal-overlay hidden">
+        <div class="modal-card modal-archives-card">
+            <button class="modal-close-btn" data-close="modal-archives">&times;</button>
+            <h2 class="modal-title">ARSIP TEKA-TEKI</h2>
+            <p class="archive-subtitle">Pilih teka-teki harian sebelumnya untuk dimainkan:</p>
+            <div class="archive-grid" id="archive-grid">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. Menu Drawer -->
+    <div id="menu-drawer-backdrop" class="drawer-backdrop hidden"></div>
+    <nav id="menu-drawer" class="menu-drawer">
+        <div class="drawer-header">
+            <h2>SQUAREWORD <span class="badge-id">ID</span></h2>
+            <button id="btn-close-drawer" class="icon-btn">&times;</button>
+        </div>
+        <div class="drawer-nav-list">
+            <button class="drawer-nav-item active" id="nav-daily">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                Main Harian
+            </button>
+            <button class="drawer-nav-item" id="nav-practice">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                Mode Bebas (Latihan)
+            </button>
+            <button class="drawer-nav-item" id="nav-archives">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                Arsip
+            </button>
+            <button class="drawer-nav-item" id="nav-stats">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Statistik
+            </button>
+            <button class="drawer-nav-item" id="nav-help">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                Cara Bermain
+            </button>
+            <button class="drawer-nav-item" id="nav-settings">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                Pengaturan
+            </button>
+        </div>
+    </nav>
+
+    <!-- Scripts -->
+    <script src="js/words.js"></script>
+    <script src="js/puzzles.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
