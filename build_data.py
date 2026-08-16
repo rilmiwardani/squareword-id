@@ -42,25 +42,32 @@ for w in target_words:
 
 seen = set()
 puzzles = []
+unused_targets = set(target_words)
 
-# Generate General (Asymmetric) puzzles (10 unique words per puzzle: 5 unique rows + 5 unique cols, 0 overlap)
-def generate_asymmetric_bank(total_target=600):
+# Generate General (Asymmetric) puzzles
+def generate_asymmetric_bank(total_target=1000):
+    step_count = [0]
+    
     def backtrack(grid):
-        if len(puzzles) >= total_target:
-            return
+        step_count[0] += 1
+        if step_count[0] > 20:  # Sangat membatasi eksplorasi untuk branch ini agar tidak lambat
+            return False
+            
+        if len(puzzles) >= total_target or not unused_targets:
+            return True
         if len(grid) == 5:
-            # Check all 5 rows are unique
             if len(set(grid)) == 5:
-                # Check all 5 columns are valid and unique
                 cols = [''.join(grid[r][c] for r in range(5)) for c in range(5)]
                 if all(c in valid_set for c in cols) and len(set(cols)) == 5:
-                    # Check NO overlap between rows and columns (10 unique words total)
                     if len(set(grid + cols)) == 10:
                         key = tuple(grid)
                         if key not in seen:
                             seen.add(key)
                             puzzles.append(list(grid))
-            return
+                            for w in grid: unused_targets.discard(w)
+                            for w in cols: unused_targets.discard(w)
+                            return True
+            return False
         
         idx = len(grid)
         possible_rows = []
@@ -76,25 +83,33 @@ def generate_asymmetric_bank(total_target=600):
             if valid:
                 possible_rows.append(cand)
         
-        random.shuffle(possible_rows)
+        possible_rows.sort(key=lambda w: (0 if w in unused_targets else 1, random.random()))
         for cand in possible_rows[:30]:
             grid.append(cand)
-            backtrack(grid)
+            if backtrack(grid):
+                return True
             grid.pop()
-            if len(puzzles) >= total_target:
-                return
+            if len(puzzles) >= total_target or not unused_targets:
+                return True
+        return False
 
     shuffled_targets = list(target_words)
     random.seed(42)
-    random.shuffle(shuffled_targets)
-    for start in shuffled_targets:
-        backtrack([start])
-        if len(puzzles) >= total_target:
-            break
+    
+    iteration = 0
+    while unused_targets and len(puzzles) < total_target and iteration < 5:
+        shuffled_targets.sort(key=lambda w: (0 if w in unused_targets else 1, random.random()))
+        for start in shuffled_targets:
+            if len(puzzles) >= total_target or not unused_targets:
+                break
+            step_count[0] = 0
+            backtrack([start])
+        iteration += 1
 
-generate_asymmetric_bank(600)
+generate_asymmetric_bank(1000)
 
-print(f"Generated total {len(puzzles)} unique 5x5 puzzles for puzzle bank (100% 10 unique words per puzzle).")
+print(f"Generated total {len(puzzles)} unique 5x5 puzzles for puzzle bank.")
+print(f"Remaining unused target words: {len(unused_targets)}")
 
 # Shuffle final puzzles deterministically so every day gets a great mix
 random.seed(2026)
